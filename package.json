@@ -1,0 +1,32 @@
+{
+  "name": "ai-ethics-dashboard",
+  "version": "1.0.0",
+  "description": "AI Ethics Framework Dashboard - Retraction Watch Scientometric Analysis",
+  "main": "backend_proxy.js",
+  "scripts": {
+    "start": "node backend_proxy.js",
+    "dev": "nodemon backend_proxy.js",
+    "serve": "python -m http.server 8000"
+  },
+  "keywords": [
+    "retraction-watch",
+    "scientometrics",
+    "bibliometrics",
+    "ai-ethics",
+    "research-integrity"
+  ],
+  "author": "riteshbdu-ship-it",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "node-fetch": "^3.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
