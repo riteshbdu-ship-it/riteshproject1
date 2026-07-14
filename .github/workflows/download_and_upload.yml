@@ -1,25 +1,26 @@
-name: 24-Hour CSV Refresh
-
-on:
-  schedule:
-    - cron: '0 0 * * *' # Automatically refreshes every 24 hours
-  workflow_dispatch: # Keeps the manual "Run workflow" button active
-
-jobs:
-  refresh-data:
-    runs-on: ubuntu-latest
-
     steps:
-      # Step 1: Download the raw file directly from Crossref's GitLab 
+      # 1. Download
       - name: Download CSV File
         run: |
           curl -L -o retraction_watch.csv "https://gitlab.com"
 
-      # Step 2: Sync and upload the file to your Google Drive folder
+      # 2. Upload to Google Drive
       - name: Upload to Google Drive
-        uses: Jambo-dev/google-drive-upload-action@v1.1.1
+        uses: willo32/google-drive-upload-action@v1
         with:
+          target: 'retraction_watch.csv'
           credentials: ${{ secrets.GSA_CREDENTIALS }}
-          filename: 'retraction_watch.csv'
-          folderId: ${{ secrets.DRIVE_FOLDER_ID }}
-          overwrite: 'true'
+          parent_folder_id: ${{ secrets.DRIVE_FOLDER_ID }}
+
+      # 3. Commit back to GitHub repository so Pages can use it
+      - name: Checkout Repo code
+        uses: actions/checkout@v4
+
+      - name: Commit data update to repository
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          mv retraction_watch.csv data/ # Adjust target path where your app reads it
+          git add .
+          git commit -m "Automated 24-hour CSV data sync" || exit 0
+          git push
