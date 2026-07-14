@@ -23,7 +23,7 @@ jobs:
         uses: willo32/google-drive-upload-action@v1
         with:
           target: 'retraction_watch.csv'
-          credentials: ${{ secrets.GSA_CREDENTIALS }}
+          credentials: ${{ secrets.GSA_SECRET }}
           parent_folder_id: ${{ secrets.DRIVE_FOLDER_ID }}
 
       # 4. Commit back to GitHub repository so Pages can use it
