@@ -1,0 +1,26 @@
+name: 24-Hour CSV Refresh
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs automatically every 24 hours
+  workflow_dispatch: # Enables the manual "Run workflow" button
+
+jobs:
+  refresh-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download CSV File
+        run: |
+          curl -L -o daily_report.csv "https://example.com"
+
+      # NOTE: Replace "https://example.com" above with your actual source URL!
+
+      |
+      - name: Upload to Google Drive
+        uses: Jambo-dev/google-drive-upload-action@v1.1.1
+        with:
+          credentials: ${{ secrets.GSA_CREDENTIALS }}
+          filename: 'daily_report.csv'
+          folderId: ${{ secrets.DRIVE_FOLDER_ID }}
+          overwrite: 'true'
