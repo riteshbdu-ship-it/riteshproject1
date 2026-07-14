@@ -1,10 +1,13 @@
-    steps:
-      # 1. Download
+# 1. Download
       - name: Download CSV File
         run: |
-          curl -L -o retraction_watch.csv "https://gitlab.com"
+          curl -L -o retraction_watch.csv "https://gitlab.com/crossref/retraction-watch-data/-/raw/main/retraction_watch.csv"
 
-      # 2. Upload to Google Drive
+      # 2. Checkout Repo code (must happen before commit step, and before the move if you want data/ to exist)
+      - name: Checkout Repo code
+        uses: actions/checkout@v4
+
+      # 3. Upload to Google Drive
       - name: Upload to Google Drive
         uses: willo32/google-drive-upload-action@v1
         with:
@@ -12,15 +15,13 @@
           credentials: ${{ secrets.GSA_CREDENTIALS }}
           parent_folder_id: ${{ secrets.DRIVE_FOLDER_ID }}
 
-      # 3. Commit back to GitHub repository so Pages can use it
-      - name: Checkout Repo code
-        uses: actions/checkout@v4
-
+      # 4. Commit back to GitHub repository so Pages can use it
       - name: Commit data update to repository
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          mv retraction_watch.csv data/ # Adjust target path where your app reads it
-          git add .
+          mkdir -p data
+          mv retraction_watch.csv data/
+          git add data/retraction_watch.csv
           git commit -m "Automated 24-hour CSV data sync" || exit 0
           git push
