@@ -1,4 +1,15 @@
-# 1. Download
+name: Update workflow to download and upload CSV file
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # runs once every 24 hours
+  workflow_dispatch:       # allows manual trigger too
+
+jobs:
+  sync-csv:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Download
       - name: Download CSV File
         run: |
           curl -L -o retraction_watch.csv "https://gitlab.com/crossref/retraction-watch-data/-/raw/main/retraction_watch.csv"
