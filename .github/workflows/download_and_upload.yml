@@ -1,30 +1,30 @@
 name: Update workflow to download and upload CSV file
 on:
   schedule:
-    - cron: '0 0 * * *'   # runs once every 24 hours
-  workflow_dispatch:       # allows manual trigger too
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 jobs:
   sync-csv:
     runs-on: ubuntu-latest
     steps:
-      # 1. Checkout Repo code first, so it doesn't wipe out files downloaded later
       - name: Checkout Repo code
         uses: actions/checkout@v4
 
-      # 2. Download
       - name: Download CSV File
         run: |
           curl -L -o retraction_watch.csv "https://gitlab.com/crossref/retraction-watch-data/-/raw/main/retraction_watch.csv"
 
-      # 3. Upload to Google Drive
       - name: Upload to Google Drive
-        uses: willo32/google-drive-upload-action@v1
+        uses: logickoder/g-drive-upload@main
         with:
-          target: 'retraction_watch.csv'
-          credentials: ${{ secrets.GSA_SECRET }}
-          parent_folder_id: ${{ secrets.DRIVE_FOLDER_ID }}
+          authType: 'oauth'
+          clientId: ${{ secrets.GOOGLE_CLIENT_ID }}
+          clientSecret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          refreshToken: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          filename: 'retraction_watch.csv'
+          folderId: ${{ secrets.DRIVE_FOLDER_ID }}
+          overwrite: 'true'
 
-      # 4. Commit back to GitHub repository so Pages can use it
       - name: Commit data update to repository
         run: |
           git config --global user.name "github-actions[bot]"
