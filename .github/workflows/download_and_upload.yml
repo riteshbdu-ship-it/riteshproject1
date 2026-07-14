@@ -37,4 +37,5 @@ jobs:
           mv retraction_watch.csv data/
           git add data/retraction_watch.csv
           git commit -m "Automated 24-hour CSV data sync" || exit 0
+          git pull --rebase origin main
           git push
