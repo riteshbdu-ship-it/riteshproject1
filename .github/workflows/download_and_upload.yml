@@ -2,25 +2,24 @@ name: 24-Hour CSV Refresh
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Runs automatically every 24 hours
-  workflow_dispatch: # Enables the manual "Run workflow" button
+    - cron: '0 0 * * *' # Automatically refreshes every 24 hours
+  workflow_dispatch: # Keeps the manual "Run workflow" button active
 
 jobs:
   refresh-data:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Download the raw file directly from Crossref's GitLab 
       - name: Download CSV File
         run: |
-          curl -L -o daily_report.csv "https://example.com"
+          curl -L -o retraction_watch.csv "https://gitlab.com"
 
-      # NOTE: Replace "https://example.com" above with your actual source URL!
-
-      |
+      # Step 2: Sync and upload the file to your Google Drive folder
       - name: Upload to Google Drive
         uses: Jambo-dev/google-drive-upload-action@v1.1.1
         with:
           credentials: ${{ secrets.GSA_CREDENTIALS }}
-          filename: 'daily_report.csv'
+          filename: 'retraction_watch.csv'
           folderId: ${{ secrets.DRIVE_FOLDER_ID }}
           overwrite: 'true'
