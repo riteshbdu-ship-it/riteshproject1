@@ -1,0 +1,41 @@
+name: Update workflow to download and upload CSV file
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-csv:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo code
+        uses: actions/checkout@v4
+
+      - name: Download CSV File
+        run: |
+          curl -L -o retraction_watch.csv "https://gitlab.com/crossref/retraction-watch-data/-/raw/main/retraction_watch.csv"
+
+      - name: Upload to Google Drive
+        uses: logickoder/g-drive-upload@main
+        with:
+          authType: 'oauth'
+          clientId: ${{ secrets.GOOGLE_CLIENT_ID }}
+          clientSecret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          refreshToken: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          filename: 'retraction_watch.csv'
+          folderId: ${{ secrets.DRIVE_FOLDER_ID }}
+          overwrite: 'true'
+
+      - name: Commit data update to repository
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          mkdir -p data
+          mv retraction_watch.csv data/
+          git add data/retraction_watch.csv
+          git commit -m "Automated 24-hour CSV data sync" || exit 0
+          git pull --rebase origin main
+          git push
