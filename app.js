@@ -858,7 +858,12 @@ function openSciValSummaryModal() {
   modal.style.zIndex = '99999';
   modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 
-  const totalRecs = document.getElementById('filterCount')?.textContent || '71,133';
+  const displayedRecords =
+  typeof Explorer !== 'undefined' && Array.isArray(Explorer.filtered)
+    ? Explorer.filtered.length
+    : RW_DATA.totalRecords;
+
+const totalRecs = displayedRecords.toLocaleString();
 
   modal.innerHTML = `
     <div class="chart-zoom-content" style="max-width:950px;width:95%;max-height:90vh;overflow-y:auto;background:#ffffff;border:2.5px solid #5b21b6;border-radius:16px;padding:28px;box-shadow:0 12px 36px rgba(0,0,0,0.25)">
