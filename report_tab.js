@@ -22,7 +22,12 @@ function renderReportTabPreview() {
   if (!container) return;
 
   const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  const totalRecs = document.getElementById('filterCount')?.textContent || '71,133';
+ const displayedRecords =
+  typeof Explorer !== 'undefined' && Array.isArray(Explorer.filtered)
+    ? Explorer.filtered.length
+    : RW_DATA.totalRecords;
+
+const totalRecs = displayedRecords.toLocaleString();
 
   container.innerHTML = `
     <!-- EXECUTIVE COVER HEADER -->
@@ -298,7 +303,7 @@ function renderReportTabPreview() {
         <span>🔎</span> <span>Section 8: Record Explorer Corpus & Real-Time Filtering Summary</span>
       </div>
       <div style="font-size:0.9rem;color:#334155;line-height:1.6">
-        Full integration with the 71,133 record Crossref dataset supporting real-time multi-dimensional micro-batch filtering across publication years (1756–2026), geographic origins, article natures, and ethical risk severity flags.
+        Full integration with the ${totalRecs} record Google Drive dataset supporting real-time multi-dimensional micro-batch filtering across publication years, geographic origins, article natures, and ethical risk severity flags.
       </div>
     </div>
 
